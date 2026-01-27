@@ -47,7 +47,6 @@ System.out.println("Result: " + result.getResult());
 
 🔹 How to Run
 
-# From project root
 mvn clean compile
 java -cp target/classes com.example.retry.demo.RetryDemo
 
