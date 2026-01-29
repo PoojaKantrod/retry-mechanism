@@ -1,23 +1,25 @@
 package com.example.retry.backoff;
 
-import com.example.retry.core.BackoffStrategy;
-
-import java.util.concurrent.ThreadLocalRandom;
+import java.util.Random;
 
 public class ExponentialBackoffWithJitter implements BackoffStrategy {
+    private final long baseDelay;
+    private final long maxJitter;
+    private final Random random = new Random();
 
-    private final long baseDelayMillis;
-    private final long maxDelayMillis;
-
-    public ExponentialBackoffWithJitter(long baseDelayMillis, long maxDelayMillis) {
-        this.baseDelayMillis = baseDelayMillis;
-        this.maxDelayMillis = maxDelayMillis;
+    public ExponentialBackoffWithJitter(long baseDelay, long maxJitter) {
+        this.baseDelay = baseDelay;
+        this.maxJitter = maxJitter;
     }
 
     @Override
-    public long nextBackoffMillis(int attempt) {
-        long expDelay = baseDelayMillis * (1L << (attempt - 1));
-        long capped = Math.min(expDelay, maxDelayMillis);
-        return ThreadLocalRandom.current().nextLong(capped);
+    public long nextDelayMillis(int attempt) {
+        long exponential = baseDelay * (1L << (attempt - 1));
+        return exponential + random.nextInt((int) maxJitter + 1);
+    }
+
+    @Override
+    public String name() {
+        return "ExponentialBackoffWithJitter";
     }
 }

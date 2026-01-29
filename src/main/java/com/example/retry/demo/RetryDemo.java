@@ -3,37 +3,23 @@ package com.example.retry.demo;
 import com.example.retry.backoff.ExponentialBackoffWithJitter;
 import com.example.retry.core.RetryExecutor;
 import com.example.retry.core.RetryResult;
+import com.example.retry.core.RetryableOperation;
 import com.example.retry.policy.DefaultRetryPolicy;
 
-import java.util.concurrent.Callable;
-import java.util.concurrent.atomic.AtomicInteger;
-
 public class RetryDemo {
-
     public static void main(String[] args) {
-
-        RetryExecutor executor = new RetryExecutor(
-                new DefaultRetryPolicy(5),
-                new ExponentialBackoffWithJitter(200, 2000)
-        );
-
-        AtomicInteger counter = new AtomicInteger(0);
-
-        Callable<String> flakyService = () -> {
-            int attempt = counter.incrementAndGet();
-            System.out.println("Attempt " + attempt);
-
-            if (attempt < 3) {
-                throw new RuntimeException("Transient failure");
-            }
-            return "SUCCESS";
+        RetryExecutor executor = new RetryExecutor();
+        RetryableOperation<String> op = () -> {
+            if (Math.random() < 0.7) throw new RuntimeException("Simulated failure");
+            return "Success!";
         };
 
-        RetryResult<String> result = executor.execute(flakyService);
+        RetryResult<String> result = executor.execute(
+                op,
+                new DefaultRetryPolicy(5),
+                new ExponentialBackoffWithJitter(500, 300)
+        );
 
-        System.out.println("\nFinal Result:");
-        System.out.println("Success: " + result.isSuccess());
-        System.out.println("Attempts: " + result.getAttempts());
-        System.out.println("Result: " + result.getResult());
+        System.out.println(result);
     }
 }

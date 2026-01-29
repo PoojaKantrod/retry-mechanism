@@ -1,17 +1,19 @@
 package com.example.retry.backoff;
 
-import com.example.retry.core.BackoffStrategy;
-
 public class ExponentialBackoff implements BackoffStrategy {
+    private final long baseDelay;
 
-    private final long baseDelayMillis;
-
-    public ExponentialBackoff(long baseDelayMillis) {
-        this.baseDelayMillis = baseDelayMillis;
+    public ExponentialBackoff(long baseDelay) {
+        this.baseDelay = baseDelay;
     }
 
     @Override
-    public long nextBackoffMillis(int attempt) {
-        return baseDelayMillis * (1L << (attempt - 1));
+    public long nextDelayMillis(int attempt) {
+        return baseDelay * (1L << (attempt - 1));
+    }
+
+    @Override
+    public String name() {
+        return "ExponentialBackoff";
     }
 }

@@ -1,9 +1,6 @@
 package com.example.retry.backoff;
 
-import com.example.retry.core.BackoffStrategy;
-
 public class FixedBackoff implements BackoffStrategy {
-
     private final long delayMillis;
 
     public FixedBackoff(long delayMillis) {
@@ -11,7 +8,12 @@ public class FixedBackoff implements BackoffStrategy {
     }
 
     @Override
-    public long nextBackoffMillis(int attempt) {
+    public long nextDelayMillis(int attempt) {
         return delayMillis;
+    }
+
+    @Override
+    public String name() {
+        return "FixedBackoff";
     }
 }

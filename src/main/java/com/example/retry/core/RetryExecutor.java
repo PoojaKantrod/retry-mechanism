@@ -1,42 +1,39 @@
 package com.example.retry.core;
 
-import java.util.concurrent.Callable;
+import com.example.retry.backoff.BackoffStrategy;
+import com.example.retry.policy.RetryPolicy;
 
 public class RetryExecutor {
 
-    private final RetryPolicy retryPolicy;
-    private final BackoffStrategy backoffStrategy;
-
-    public RetryExecutor(RetryPolicy retryPolicy, BackoffStrategy backoffStrategy) {
-        this.retryPolicy = retryPolicy;
-        this.backoffStrategy = backoffStrategy;
-    }
-
-    public <T> RetryResult<T> execute(Callable<T> task) {
-        int attempt = 0;
+    public <T> RetryResult<T> execute(RetryableOperation<T> operation,
+                                      RetryPolicy policy,
+                                      BackoffStrategy backoff) {
+        int attempts = 0;
+        long totalWait = 0;
         Exception lastException = null;
 
-        while (attempt < retryPolicy.maxAttempts()) {
-            attempt++;
+        while (true) {
+            attempts++;
             try {
-                T result = task.call();
-                return new RetryResult<>(true, result, null, attempt);
+                T result = operation.execute();
+                return new RetryResult<>(true, result, null, attempts, totalWait,
+                        "Success", backoff.name());
             } catch (Exception e) {
                 lastException = e;
-
-                if (!retryPolicy.shouldRetry(e, attempt)) {
-                    break;
+                if (!policy.shouldRetry(attempts, e)) {
+                    return new RetryResult<>(false, null, lastException, attempts, totalWait,
+                            "Retry policy exhausted", backoff.name());
                 }
-
+                long delay = backoff.nextDelayMillis(attempts);
+                totalWait += delay;
                 try {
-                    Thread.sleep(backoffStrategy.nextBackoffMillis(attempt));
-                } catch (InterruptedException ie) {
+                    Thread.sleep(delay);
+                } catch (InterruptedException ex) {
                     Thread.currentThread().interrupt();
-                    break;
+                    return new RetryResult<>(false, null, ex, attempts, totalWait,
+                            "Interrupted", backoff.name());
                 }
             }
         }
-
-        return new RetryResult<>(false, null, lastException, attempt);
     }
 }
