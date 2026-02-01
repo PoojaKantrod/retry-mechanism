@@ -8,12 +8,7 @@ public class FixedBackoff implements BackoffStrategy {
     }
 
     @Override
-    public long nextDelayMillis(int attempt) {
+    public long nextDelay(int attempt) {
         return delayMillis;
-    }
-
-    @Override
-    public String name() {
-        return "FixedBackoff";
     }
 }

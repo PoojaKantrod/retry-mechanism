@@ -6,6 +6,6 @@ com/example/retry/core/RetryExecutor.class
 com/example/retry/policy/DefaultRetryPolicy.class
 com/example/retry/core/RetryableOperation.class
 com/example/retry/core/RetryExhaustedException.class
-com/example/retry/policy/RetryPolicy.class
 com/example/retry/backoff/ExponentialBackoffWithJitter.class
+com/example/retry/core/RetryPolicy.class
 com/example/retry/core/RetryResult.class

@@ -1,17 +1,17 @@
 package com.example.retry.core;
 
 public class RetryResult<T> {
-    private final boolean success;
-    private final T result;
-    private final Exception lastException;
-    private final int attempts;
-    private final long totalWaitMillis;
-    private final String reasonStopped;
-    private final String backoffStrategy;
+    public final boolean success;
+    public final T result;
+    public final Exception lastException;
+    public final int attempts;
+    public final long totalWaitMillis;
+    public final String reasonStopped;
+    public final String backoffStrategy;
 
     public RetryResult(boolean success, T result, Exception lastException,
-                       int attempts, long totalWaitMillis,
-                       String reasonStopped, String backoffStrategy) {
+                       int attempts, long totalWaitMillis, String reasonStopped,
+                       String backoffStrategy) {
         this.success = success;
         this.result = result;
         this.lastException = lastException;
@@ -26,7 +26,7 @@ public class RetryResult<T> {
         return "RetryResult{" +
                 "success=" + success +
                 ", result=" + result +
-                ", lastException=" + (lastException != null ? lastException.getClass().getSimpleName() + ": " + lastException.getMessage() : null) +
+                ", lastException=" + lastException +
                 ", attempts=" + attempts +
                 ", totalWaitMillis=" + totalWaitMillis +
                 ", reasonStopped='" + reasonStopped + '\'' +

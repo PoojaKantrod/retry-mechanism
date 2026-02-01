@@ -1,16 +1,16 @@
-**Retry Mechanism (Java)**
+Retry Mechanism (Java)
 
 This project implements a simple and extensible retry mechanism in Java. It demonstrates how to retry a failing operation with a configurable backoff strategy while keeping business logic clean and reusable.
 
 ⸻
 
-**Problem Statement**
+Problem Statement
 
 In real-world systems, operations such as API calls or service invocations can fail temporarily due to network issues, timeouts, or transient errors. Retrying these operations in a controlled way improves reliability and resilience.
 
 ⸻
 
-**Solution Overview**
+Solution Overview
 
 This project provides:
 	•	A RetryExecutor to handle retry logic
@@ -21,9 +21,9 @@ The retry logic is completely separated from the business code.
 
 ⸻
 
-**Key Components**
+Key Components
 
-**RetryExecutor**
+RetryExecutor
 The RetryExecutor is responsible for:
 	•	Executing the operation
 	•	Retrying when an exception occurs
@@ -34,7 +34,7 @@ This keeps retry behavior consistent and avoids duplicating retry logic across t
 
 ⸻
 
-**Backoff Strategy**
+Backoff Strategy
 ExponentialBackoffWithJitter
 
 This strategy increases the wait time exponentially after each retry and adds random jitter.
@@ -46,7 +46,7 @@ Why this strategy:
 
 ⸻
 
-**RetryResult**
+RetryResult
 
 RetryResult captures the outcome of the retry execution in a single object.
 
@@ -61,11 +61,11 @@ Fields:
 
 ⸻
 
-**Example Output**
+Example Output
 
 RetryResult{success=true, result=Success!, lastException=null, attempts=3, totalWaitMillis=1647, reasonStopped=‘Success’, backoffStrategy=‘ExponentialBackoffWithJitter’}
 
-**Explanation:**
+Explanation:
 	•	The operation failed initially
 	•	It succeeded on the 3rd attempt
 	•	1647 milliseconds were spent waiting between retries
@@ -74,19 +74,19 @@ RetryResult{success=true, result=Success!, lastException=null, attempts=3, total
 
 ⸻
 
-**How to Run**
+How to Run
 
-**Requirements:**
+Requirements:
 	•	Java 11 or higher
 	•	Maven
 
-C**ommand to run the demo:**
+Command to run the demo:
 
 mvn clean compile exec:java -Dexec.mainClass=com.example.retry.demo.RetryDemo
 
 ⸻
 
-**Design Principles Used**
+Design Principles Used
 	•	Separation of concerns
 	•	Single responsibility principle
 	•	Open for extension (new backoff strategies can be added easily)
@@ -94,7 +94,7 @@ mvn clean compile exec:java -Dexec.mainClass=com.example.retry.demo.RetryDemo
 
 ⸻
 
-**Future Enhancements**
+Future Enhancements
 
 Planned improvements in future commits:
 	•	Additional backoff strategies (fixed, linear)
@@ -105,6 +105,5 @@ Planned improvements in future commits:
 
 ⸻
 
-**Author**
-
+Author
 Pooja Kantrod

@@ -1,6 +1,9 @@
 package com.example.retry.policy;
 
+import com.example.retry.core.RetryPolicy;
+
 public class DefaultRetryPolicy implements RetryPolicy {
+
     private final int maxAttempts;
 
     public DefaultRetryPolicy(int maxAttempts) {
@@ -8,7 +11,12 @@ public class DefaultRetryPolicy implements RetryPolicy {
     }
 
     @Override
-    public boolean shouldRetry(int attempt, Exception e) {
+    public int getMaxAttempts() {
+        return maxAttempts;
+    }
+
+    @Override
+    public boolean shouldRetry(int attempt, Exception lastException) {
         return attempt < maxAttempts;
     }
 }
