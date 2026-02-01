@@ -1,109 +1,62 @@
-Retry Mechanism (Java)
+# Retry Mechanism in Java
 
-This project implements a simple and extensible retry mechanism in Java. It demonstrates how to retry a failing operation with a configurable backoff strategy while keeping business logic clean and reusable.
+This project demonstrates a **flexible retry mechanism** with **configurable backoff strategies** in Java. It provides detailed logs for each attempt, showing which exception occurred, how long it waited, and why the retries stopped.
 
-⸻
+---
 
-Problem Statement
+## Features
 
-In real-world systems, operations such as API calls or service invocations can fail temporarily due to network issues, timeouts, or transient errors. Retrying these operations in a controlled way improves reliability and resilience.
+1. **Retry with Backoff Strategies**
+   - **FixedBackoff**: Waits a constant time between retries.
+   - **ExponentialBackoff**: Waits exponentially longer after each failed attempt.
+   - **ExponentialBackoffWithJitter**: Adds random jitter to exponential backoff to avoid synchronized retries.
 
-⸻
+2. **Verbose Retry Logging**
+   - Shows exception on each attempt.
+   - Displays wait time before the next attempt.
+   - Tracks total wait time.
+   - Explains why the retry stopped (success, max attempts reached, etc.).
+   - Shows which backoff strategy was used.
 
-Solution Overview
+---
 
-This project provides:
-	•	A RetryExecutor to handle retry logic
-	•	A BackoffStrategy to control delay between retries
-	•	A RetryResult object that captures detailed execution information
+## Example Output
 
-The retry logic is completely separated from the business code.
+=== Testing with FixedBackoff ===
+Attempt 1 failed: Random failure: 0.42
+Waiting 200 ms before next attempt...
+Attempt 2 failed: Random failure: 0.15
+Waiting 200 ms before next attempt...
+...
+RetryResult{success=true, result=Success!, lastException=null, attempts=3, totalWaitMillis=400, reasonStopped='Success', backoffStrategy='FixedBackoff'}
 
-⸻
+=== Testing with ExponentialBackoff ===
+Attempt 1 failed: Random failure: 0.33
+Waiting 100 ms before next attempt...
+Attempt 2 failed: Random failure: 0.55
+Waiting 200 ms before next attempt...
+...
+RetryResult{success=true, result=Success!, lastException=null, attempts=3, totalWaitMillis=300, reasonStopped='Success', backoffStrategy='ExponentialBackoff'}
 
-Key Components
+=== Testing with ExponentialBackoffWithJitter ===
+Attempt 1 failed: Random failure: 0.48
+Waiting 135 ms before next attempt...
+Attempt 2 failed: Random failure: 0.22
+Waiting 295 ms before next attempt...
+...
+RetryResult{success=true, result=Success!, lastException=null, attempts=3, totalWaitMillis=430, reasonStopped='Success', backoffStrategy='ExponentialBackoffWithJitter'}
 
-RetryExecutor
-The RetryExecutor is responsible for:
-	•	Executing the operation
-	•	Retrying when an exception occurs
-	•	Applying backoff delays between retries
-	•	Stopping when the operation succeeds or maximum attempts are reached
+---
 
-This keeps retry behavior consistent and avoids duplicating retry logic across the codebase.
+## How to Run
 
-⸻
+1. Compile the project: mvn clean compile
+2. Run the demo: java -cp target/classes com.example.retry.demo.RetryDemo
 
-Backoff Strategy
-ExponentialBackoffWithJitter
+---
 
-This strategy increases the wait time exponentially after each retry and adds random jitter.
+## Notes
 
-Why this strategy:
-	•	Prevents retry storms
-	•	Avoids synchronized retries
-	•	Commonly used in production systems (AWS, Google, Netflix)
-
-⸻
-
-RetryResult
-
-RetryResult captures the outcome of the retry execution in a single object.
-
-Fields:
-	•	success: whether the operation eventually succeeded
-	•	result: the successful result (if any)
-	•	lastException: final exception if all retries failed
-	•	attempts: number of attempts made
-	•	totalWaitMillis: total time spent waiting between retries
-	•	reasonStopped: why retries stopped (Success or MaxAttemptsReached)
-	•	backoffStrategy: name of the backoff strategy used
-
-⸻
-
-Example Output
-
-RetryResult{success=true, result=Success!, lastException=null, attempts=3, totalWaitMillis=1647, reasonStopped=‘Success’, backoffStrategy=‘ExponentialBackoffWithJitter’}
-
-Explanation:
-	•	The operation failed initially
-	•	It succeeded on the 3rd attempt
-	•	1647 milliseconds were spent waiting between retries
-	•	Retries stopped because the operation succeeded
-	•	Exponential backoff with jitter was applied
-
-⸻
-
-How to Run
-
-Requirements:
-	•	Java 11 or higher
-	•	Maven
-
-Command to run the demo:
-
-mvn clean compile exec:java -Dexec.mainClass=com.example.retry.demo.RetryDemo
-
-⸻
-
-Design Principles Used
-	•	Separation of concerns
-	•	Single responsibility principle
-	•	Open for extension (new backoff strategies can be added easily)
-	•	Clean and reusable retry API
-
-⸻
-
-Future Enhancements
-
-Planned improvements in future commits:
-	•	Additional backoff strategies (fixed, linear)
-	•	Better exception visibility and logging
-	•	Retry policies based on exception types
-	•	Metrics and monitoring
-	•	Asynchronous retry support
-
-⸻
-
-Author
-Pooja Kantrod
+- This project can be extended with **custom retry policies** or **distributed retry mechanisms**.
+- Helps prevent overwhelming resources by applying controlled backoff.
+- All strategies currently support **tracking total wait time**, **attempt count**, and **reason for stopping**.
